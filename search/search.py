@@ -109,12 +109,68 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.Queue()
+
+    exploredNodes = []
+
+    startState = problem.getStartState()
+    startNode = (startState, [], 0)
+
+    frontier.push(startNode)
+
+    while not frontier.isEmpty():
+
+        currentState, actions, currentCost = frontier.pop()
+
+        if currentState not in exploredNodes:
+            exploredNodes.append(currentState)
+
+            if problem.isGoalState(currentState):
+                return actions
+            else:
+                successors = problem.getSuccessors(currentState)
+
+                for sState, sAction, sCost in successors:
+                    newAction = actions + [sAction]
+                    newCost = currentCost + sCost
+                    newNode = (sState, newAction, newCost)
+
+                    frontier.push(newNode)
+
+    return actions
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+
+    exploredNodes = {}
+
+    startState = problem.getStartState()
+    startNode = (startState, [], 0)
+
+    frontier.push(startNode, 0)
+
+    while not frontier.isEmpty():
+
+        currentState, actions, currentCost = frontier.pop()
+
+        if (currentState not in exploredNodes) or (currentCost < exploredNodes[currentState]):
+            exploredNodes[currentState] = currentCost
+
+            if problem.isGoalState(currentState):
+                return actions
+            else:
+                successors = problem.getSuccessors(currentState)
+
+                for sState, sAction, sCost in successors:
+                    newAction = actions + [sAction]
+                    newCost = currentCost + sCost
+                    newNode = (sState, newAction, newCost)
+
+                    frontier.update(newNode, newCost)
+
+    return actions
 
 def nullHeuristic(state, problem=None):
     """
